@@ -1,0 +1,11 @@
+{
+    "permissions": {
+        "allow": [],
+        "deny": [],
+        "sandbox": {
+            "allowedDomains": [
+                "*.anthropic.com"
+            ]
+        }
+    }
+}
