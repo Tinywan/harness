@@ -22,16 +22,12 @@ test('codex getBinary returns codex', function () {
 });
 
 test('codex getArgs builds correct CLI parameters', function () {
-    $job = new Job(
-        workspace: '/work',
-        skillName: 'code-review',
-        model: 'gpt-5.3-codex',
-        outputFile: 'out.json',
-    );
+    $job = new Job(workspace: '/work', skillName: 'code-review', model: 'gpt-5.3-codex', outputFile: 'out.json');
 
     $args = $this->harness->getArgs($job);
 
-    expect($args)->toContain('exec')
+    expect($args)
+        ->toContain('exec')
         ->toContain('--json')
         ->toContain('--sandbox')
         ->toContain('danger-full-access')
@@ -72,16 +68,28 @@ test('codex parseStream maps stream to neutral events', function () {
         $events[] = $e;
     });
 
-    expect($events)->toHaveCount(4)
-        ->and($events[0]->getKindValue())->toBe(EventKind::Session->value)
-        ->and($events[0]->sessionID)->toBe('codex-sess-1')
-        ->and($events[1]->getKindValue())->toBe(EventKind::Tool->value)
-        ->and($events[1]->tool)->toBe('command')
-        ->and($events[1]->text)->toBe('composer test')
-        ->and($events[2]->getKindValue())->toBe(EventKind::Text->value)
-        ->and($events[2]->text)->toBe('All tests passed.')
-        ->and($events[3]->getKindValue())->toBe(EventKind::Result->value)
-        ->and($events[3]->usage->inputTokens)->toBe(200)
-        ->and($events[3]->usage->outputTokens)->toBe(80)
-        ->and($events[3]->usage->cacheReadTokens)->toBe(50);
+    expect($events)
+        ->toHaveCount(4)
+        ->and($events[0]->getKindValue())
+        ->toBe(EventKind::Session->value)
+        ->and($events[0]->sessionID)
+        ->toBe('codex-sess-1')
+        ->and($events[1]->getKindValue())
+        ->toBe(EventKind::Tool->value)
+        ->and($events[1]->tool)
+        ->toBe('command')
+        ->and($events[1]->text)
+        ->toBe('composer test')
+        ->and($events[2]->getKindValue())
+        ->toBe(EventKind::Text->value)
+        ->and($events[2]->text)
+        ->toBe('All tests passed.')
+        ->and($events[3]->getKindValue())
+        ->toBe(EventKind::Result->value)
+        ->and($events[3]->usage->inputTokens)
+        ->toBe(200)
+        ->and($events[3]->usage->outputTokens)
+        ->toBe(80)
+        ->and($events[3]->usage->cacheReadTokens)
+        ->toBe(50);
 });

@@ -49,7 +49,8 @@ class OpencodeHarness implements HarnessInterface
     {
         $args = [
             'run',
-            '--format', 'json',
+            '--format',
+            'json',
             '--auto',
         ];
 
@@ -100,13 +101,9 @@ class OpencodeHarness implements HarnessInterface
         }
 
         if ($this->isOpencodeToolEvent($event)) {
-            $name = (string) ($part['tool'] ?? ($part['name'] ?? ''));
+            $name = (string) ($part['tool'] ?? $part['name'] ?? '');
             $input = $part['state']['input'] ?? null;
-            $emit(new Event(
-                EventKind::Tool,
-                tool: $name,
-                text: Harness::summariseInput($name, $input)
-            ));
+            $emit(new Event(EventKind::Tool, tool: $name, text: Harness::summariseInput($name, $input)));
             return;
         }
 
@@ -126,12 +123,14 @@ class OpencodeHarness implements HarnessInterface
         }
 
         if ($type === 'step_finish' && is_array($part)) {
-            $emit(new Event(
-                EventKind::Result,
-                costUSD: (float) ($part['cost'] ?? 0.0),
-                turns: 1,
-                usage: $this->opencodeUsage($part['tokens'] ?? null)
-            ));
+            $emit(
+                new Event(
+                    EventKind::Result,
+                    costUSD: (float) ($part['cost'] ?? 0.0),
+                    turns: 1,
+                    usage: $this->opencodeUsage($part['tokens'] ?? null),
+                ),
+            );
             return;
         }
 
@@ -161,7 +160,7 @@ class OpencodeHarness implements HarnessInterface
             inputTokens: $input,
             outputTokens: $output + $reasoning,
             cacheReadTokens: $read,
-            cacheWriteTokens: $write
+            cacheWriteTokens: $write,
         );
     }
 
@@ -178,10 +177,7 @@ class OpencodeHarness implements HarnessInterface
         $type = (string) ($event['type'] ?? '');
         $partType = (string) ($part['type'] ?? '');
 
-        return $type === 'tool'
-            || $partType === 'tool'
-            || !empty($part['tool'])
-            || !empty($part['name']);
+        return $type === 'tool' || $partType === 'tool' || !empty($part['tool']) || !empty($part['name']);
     }
 
     /**
@@ -244,7 +240,9 @@ class OpencodeHarness implements HarnessInterface
 
     public function getSkillDir(string $workspace, string $name): string
     {
-        return $workspace . DIRECTORY_SEPARATOR . '.opencode' . DIRECTORY_SEPARATOR . 'skill' . DIRECTORY_SEPARATOR . $name;
+        return (
+            $workspace . DIRECTORY_SEPARATOR . '.opencode' . DIRECTORY_SEPARATOR . 'skill' . DIRECTORY_SEPARATOR . $name
+        );
     }
 
     public function getGuideFilename(): string
@@ -295,14 +293,10 @@ class OpencodeHarness implements HarnessInterface
 
     public function getDefaultModels(): array
     {
-        $claude = (new ClaudeHarness())->getDefaultModels();
+        $claude = new ClaudeHarness()->getDefaultModels();
         $models = [];
         foreach ($claude as $m) {
-            $models[] = new ModelDefault(
-                $m->name,
-                'anthropic/' . $m->id,
-                $m->tier
-            );
+            $models[] = new ModelDefault($m->name, 'anthropic/' . $m->id, $m->tier);
         }
 
         return $models;

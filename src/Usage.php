@@ -17,8 +17,7 @@ class Usage
         public int $outputTokens = 0,
         public int $cacheReadTokens = 0,
         public int $cacheWriteTokens = 0,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, int>

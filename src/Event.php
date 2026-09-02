@@ -55,7 +55,12 @@ class Event
         return match ($kind) {
             EventKind::Thinking->value => '[thinking] ' . self::truncate($this->text),
             EventKind::Tool->value => sprintf('[%s] %s', strtolower($this->tool), self::truncate($this->text)),
-            EventKind::Result->value => sprintf('[result] cost=$%.4f turns=%d %s', $this->costUSD, $this->turns, self::truncate($this->text)),
+            EventKind::Result->value => sprintf(
+                '[result] cost=$%.4f turns=%d %s',
+                $this->costUSD,
+                $this->turns,
+                self::truncate($this->text),
+            ),
             EventKind::Session->value => '[session] ' . $this->sessionID,
             EventKind::RateLimit->value => $this->formatRateLimit(),
             EventKind::Egress->value => '[egress] ' . $this->text,

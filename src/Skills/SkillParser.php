@@ -68,7 +68,7 @@ class SkillParser
             description: trim((string) ($parsed['description'] ?? '')),
             license: trim((string) ($parsed['license'] ?? '')),
             compatibility: trim((string) ($parsed['compatibility'] ?? '')),
-            allowedTools: trim((string) ($parsed['allowed-tools'] ?? ($parsed['allowed_tools'] ?? ''))),
+            allowedTools: trim((string) ($parsed['allowed-tools'] ?? $parsed['allowed_tools'] ?? '')),
             metadata: $metadata,
             body: trim($body),
             sourcePath: $abs,
@@ -125,7 +125,10 @@ class SkillParser
         }
 
         if (!preg_match(self::NAME_PATTERN, $skill->name)) {
-            $skill->warnings[] = sprintf('name "%s" is not spec-conformant (lowercase, digits, hyphens only)', $skill->name);
+            $skill->warnings[] = sprintf(
+                'name "%s" is not spec-conformant (lowercase, digits, hyphens only)',
+                $skill->name,
+            );
         }
 
         if (strlen($skill->description) > Skill::MAX_DESC_LEN) {

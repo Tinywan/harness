@@ -52,10 +52,16 @@ test('strip directives removes configured files and directories but preserves gi
     file_put_contents($this->tempDir . '/.git/config', 'gitconfig');
 
     $removed = Directives::stripDirectives($this->tempDir);
-    expect($removed)->toBe(3)
-        ->and(is_dir($this->tempDir . '/.claude'))->toBeFalse()
-        ->and(file_exists($this->tempDir . '/CLAUDE.md'))->toBeFalse()
-        ->and(file_exists($this->tempDir . '/AGENTS.md'))->toBeFalse()
-        ->and(file_exists($this->tempDir . '/keep_me.php'))->toBeTrue()
-        ->and(is_dir($this->tempDir . '/.git'))->toBeTrue();
+    expect($removed)
+        ->toBe(3)
+        ->and(is_dir($this->tempDir . '/.claude'))
+        ->toBeFalse()
+        ->and(file_exists($this->tempDir . '/CLAUDE.md'))
+        ->toBeFalse()
+        ->and(file_exists($this->tempDir . '/AGENTS.md'))
+        ->toBeFalse()
+        ->and(file_exists($this->tempDir . '/keep_me.php'))
+        ->toBeTrue()
+        ->and(is_dir($this->tempDir . '/.git'))
+        ->toBeTrue();
 });

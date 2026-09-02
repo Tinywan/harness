@@ -12,20 +12,19 @@ use Harness\Pricing;
 use Harness\Usage;
 
 test('normalize model id', function () {
-    expect(Pricing::normalizeModelId('anthropic/claude-sonnet-4-6'))->toBe('claude-sonnet-4-6')
-        ->and(Pricing::normalizeModelId('claude-fable-5[1m]'))->toBe('claude-fable-5')
-        ->and(Pricing::normalizeModelId('anthropic/claude-fable-5[1m]'))->toBe('claude-fable-5')
-        ->and(Pricing::normalizeModelId('gpt-5.3-codex'))->toBe('gpt-5.3-codex');
+    expect(Pricing::normalizeModelId('anthropic/claude-sonnet-4-6'))
+        ->toBe('claude-sonnet-4-6')
+        ->and(Pricing::normalizeModelId('claude-fable-5[1m]'))
+        ->toBe('claude-fable-5')
+        ->and(Pricing::normalizeModelId('anthropic/claude-fable-5[1m]'))
+        ->toBe('claude-fable-5')
+        ->and(Pricing::normalizeModelId('gpt-5.3-codex'))
+        ->toBe('gpt-5.3-codex');
 });
 
 test('cost from usage calculation', function () {
     // claude-sonnet-4-6: in=3.00, out=15.00, cached_in=0.30, cache_write=3.75 per million
-    $usage = new Usage(
-        inputTokens: 1000000,
-        outputTokens: 500000,
-        cacheReadTokens: 200000,
-        cacheWriteTokens: 100000
-    );
+    $usage = new Usage(inputTokens: 1000000, outputTokens: 500000, cacheReadTokens: 200000, cacheWriteTokens: 100000);
 
     // uncached = 1000000 - 200000 - 100000 = 700000
     // cost = (700000 * 3.00 + 200000 * 0.30 + 100000 * 3.75 + 500000 * 15.00) / 1000000 = 10.035

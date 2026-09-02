@@ -22,16 +22,12 @@ test('copilot getBinary returns copilot', function () {
 });
 
 test('copilot getArgs builds correct CLI parameters', function () {
-    $job = new Job(
-        workspace: '/work',
-        skillName: 'sec-scan',
-        model: 'gpt-5.6-sol',
-        maxTurns: 20,
-    );
+    $job = new Job(workspace: '/work', skillName: 'sec-scan', model: 'gpt-5.6-sol', maxTurns: 20);
 
     $args = $this->harness->getArgs($job);
 
-    expect($args)->toContain('-p')
+    expect($args)
+        ->toContain('-p')
         ->toContain('--output-format')
         ->toContain('json')
         ->toContain('--autopilot')
@@ -81,15 +77,26 @@ test('copilot parseStream aggregates usage checkpoints and costs', function () {
         $events[] = $e;
     });
 
-    expect($events)->toHaveCount(4)
-        ->and($events[0]->getKindValue())->toBe(EventKind::Thinking->value)
-        ->and($events[0]->text)->toBe('Analyzing security issues')
-        ->and($events[1]->getKindValue())->toBe(EventKind::Text->value)
-        ->and($events[1]->text)->toBe('Found 0 vulnerabilities.')
-        ->and($events[2]->getKindValue())->toBe(EventKind::Session->value)
-        ->and($events[2]->sessionID)->toBe('copilot-sess-99')
-        ->and($events[3]->getKindValue())->toBe(EventKind::Result->value)
-        ->and($events[3]->costUSD)->toBe(0.05)
-        ->and($events[3]->usage->inputTokens)->toBe(500)
-        ->and($events[3]->text)->toBe('Found 0 vulnerabilities.');
+    expect($events)
+        ->toHaveCount(4)
+        ->and($events[0]->getKindValue())
+        ->toBe(EventKind::Thinking->value)
+        ->and($events[0]->text)
+        ->toBe('Analyzing security issues')
+        ->and($events[1]->getKindValue())
+        ->toBe(EventKind::Text->value)
+        ->and($events[1]->text)
+        ->toBe('Found 0 vulnerabilities.')
+        ->and($events[2]->getKindValue())
+        ->toBe(EventKind::Session->value)
+        ->and($events[2]->sessionID)
+        ->toBe('copilot-sess-99')
+        ->and($events[3]->getKindValue())
+        ->toBe(EventKind::Result->value)
+        ->and($events[3]->costUSD)
+        ->toBe(0.05)
+        ->and($events[3]->usage->inputTokens)
+        ->toBe(500)
+        ->and($events[3]->text)
+        ->toBe('Found 0 vulnerabilities.');
 });

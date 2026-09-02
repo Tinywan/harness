@@ -22,15 +22,12 @@ test('opencode getBinary returns opencode', function () {
 });
 
 test('opencode getArgs builds correct CLI parameters', function () {
-    $job = new Job(
-        workspace: '/work',
-        skillName: 'my-skill',
-        model: 'anthropic/claude-sonnet-4-6',
-    );
+    $job = new Job(workspace: '/work', skillName: 'my-skill', model: 'anthropic/claude-sonnet-4-6');
 
     $args = $this->harness->getArgs($job);
 
-    expect($args)->toContain('run')
+    expect($args)
+        ->toContain('run')
         ->toContain('--format')
         ->toContain('json')
         ->toContain('--auto')
@@ -82,16 +79,28 @@ test('opencode parseStream maps stream to neutral events', function () {
         $events[] = $e;
     });
 
-    expect($events)->toHaveCount(4)
-        ->and($events[0]->getKindValue())->toBe(EventKind::Session->value)
-        ->and($events[0]->sessionID)->toBe('opencode-sess-1')
-        ->and($events[1]->getKindValue())->toBe(EventKind::Thinking->value)
-        ->and($events[1]->text)->toBe('Thinking about implementation')
-        ->and($events[2]->getKindValue())->toBe(EventKind::Tool->value)
-        ->and($events[2]->tool)->toBe('shell')
-        ->and($events[2]->text)->toBe('pwd')
-        ->and($events[3]->getKindValue())->toBe(EventKind::Result->value)
-        ->and($events[3]->costUSD)->toBe(0.003)
-        ->and($events[3]->usage->inputTokens)->toBe(150)
-        ->and($events[3]->usage->outputTokens)->toBe(75); // output (50) + reasoning (25)
+    expect($events)
+        ->toHaveCount(4)
+        ->and($events[0]->getKindValue())
+        ->toBe(EventKind::Session->value)
+        ->and($events[0]->sessionID)
+        ->toBe('opencode-sess-1')
+        ->and($events[1]->getKindValue())
+        ->toBe(EventKind::Thinking->value)
+        ->and($events[1]->text)
+        ->toBe('Thinking about implementation')
+        ->and($events[2]->getKindValue())
+        ->toBe(EventKind::Tool->value)
+        ->and($events[2]->tool)
+        ->toBe('shell')
+        ->and($events[2]->text)
+        ->toBe('pwd')
+        ->and($events[3]->getKindValue())
+        ->toBe(EventKind::Result->value)
+        ->and($events[3]->costUSD)
+        ->toBe(0.003)
+        ->and($events[3]->usage->inputTokens)
+        ->toBe(150)
+        ->and($events[3]->usage->outputTokens)
+        ->toBe(75); // output (50) + reasoning (25)
 });

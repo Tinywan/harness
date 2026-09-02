@@ -43,5 +43,5 @@ try {
         echo $event->format() . "\n";
     });
 } catch (\Throwable $e) {
-    echo "Execution failed: " . $e->getMessage() . "\n";
+    echo 'Execution failed: ' . $e->getMessage() . "\n";
 }

@@ -32,7 +32,8 @@ class ClaudeHarness implements HarnessInterface
     {
         $args = [
             '-p',
-            '--output-format', 'stream-json',
+            '--output-format',
+            'stream-json',
             '--verbose',
         ];
 
@@ -145,7 +146,9 @@ class ClaudeHarness implements HarnessInterface
             case 'error':
                 $text = '';
                 if (isset($data['error'])) {
-                    $text = is_string($data['error']) ? $data['error'] : ($data['error']['message'] ?? json_encode($data['error'], JSON_UNESCAPED_UNICODE));
+                    $text = is_string($data['error'])
+                        ? $data['error']
+                        : $data['error']['message'] ?? json_encode($data['error'], JSON_UNESCAPED_UNICODE);
                 }
                 $emit(new Event(EventKind::Error, text: (string) $text));
                 break;
@@ -197,11 +200,13 @@ class ClaudeHarness implements HarnessInterface
 
                 case 'tool_use':
                     $name = (string) ($block['name'] ?? '');
-                    $emit(new Event(
-                        EventKind::Tool,
-                        tool: $name,
-                        text: Harness::summariseInput($name, $block['input'] ?? null)
-                    ));
+                    $emit(
+                        new Event(
+                            EventKind::Tool,
+                            tool: $name,
+                            text: Harness::summariseInput($name, $block['input'] ?? null),
+                        ),
+                    );
                     break;
             }
         }
@@ -239,7 +244,9 @@ class ClaudeHarness implements HarnessInterface
 
     public function getSkillDir(string $workspace, string $name): string
     {
-        return $workspace . DIRECTORY_SEPARATOR . '.claude' . DIRECTORY_SEPARATOR . 'skills' . DIRECTORY_SEPARATOR . $name;
+        return (
+            $workspace . DIRECTORY_SEPARATOR . '.claude' . DIRECTORY_SEPARATOR . 'skills' . DIRECTORY_SEPARATOR . $name
+        );
     }
 
     public function getGuideFilename(): string

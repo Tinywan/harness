@@ -60,7 +60,7 @@ class Harness
         throw new InvalidArgumentException(sprintf(
             'harness: unknown backend "%s", must be one of %s',
             $name,
-            self::names()
+            self::names(),
         ));
     }
 
@@ -193,7 +193,11 @@ class Harness
      */
     public static function buildSkillPrompt(Job $j): string
     {
-        $prompt = sprintf('Use the "%s" skill on the repository cloned at %s.', $j->skillName, self::sourcePromptPath($j));
+        $prompt = sprintf(
+            'Use the "%s" skill on the repository cloned at %s.',
+            $j->skillName,
+            self::sourcePromptPath($j),
+        );
         if ($j->outputFile !== '') {
             $prompt .= sprintf(' Write your structured output to ./%s as the skill specifies.', $j->outputFile);
             $prompt .= self::schemaValidationHint($j);
@@ -214,7 +218,7 @@ class Harness
         $prompt = sprintf(
             'Continue the "%s" skill on the repository at %s from where you left off.',
             $j->skillName,
-            self::sourcePromptPath($j)
+            self::sourcePromptPath($j),
         );
 
         if ($j->outputFile !== '') {
@@ -249,7 +253,7 @@ class Harness
             '%s the instructions in %s/SKILL.md against the repository cloned at %s.',
             $verb,
             $skillPath,
-            self::sourcePromptPath($j)
+            self::sourcePromptPath($j),
         );
 
         if ($j->outputFile !== '') {

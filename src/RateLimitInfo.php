@@ -21,8 +21,7 @@ class RateLimitInfo
         public bool $isUsingOverage = false,
         public int $resetsAt = 0,
         public string $type = '',
-    ) {
-    }
+    ) {}
 
     /**
      * Converts resetsAt (Unix timestamp) to a UTC DateTimeImmutable.
@@ -34,7 +33,7 @@ class RateLimitInfo
             return null;
         }
 
-        return (new DateTimeImmutable("@{$this->resetsAt}"))->setTimezone(new DateTimeZone('UTC'));
+        return new DateTimeImmutable("@{$this->resetsAt}")->setTimezone(new DateTimeZone('UTC'));
     }
 
     /**

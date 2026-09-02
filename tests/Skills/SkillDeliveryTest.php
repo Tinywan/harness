@@ -54,7 +54,7 @@ test('stage skill copies files and creates discovery directory', function () {
         description: 'My staged skill description',
         body: 'Instructions for staged skill.',
         sourcePath: $this->tempSkillSource,
-        schemaJSON: '{"type": "object"}'
+        schemaJSON: '{"type": "object"}',
     );
 
     // create a sibling helper file in source
@@ -66,12 +66,15 @@ test('stage skill copies files and creates discovery directory', function () {
     SkillDelivery::stage($harness, $job, $skill);
 
     $targetDir = $this->tempWorkspace . '/.claude/skills/my-staged-skill';
-    expect(is_dir($targetDir))->toBeTrue()
-        ->and(file_exists($targetDir . '/SKILL.md'))->toBeTrue()
-        ->and(file_exists($targetDir . '/schema.json'))->toBeTrue()
-        ->and(file_exists($targetDir . '/helper.py'))->toBeTrue();
+    expect(is_dir($targetDir))
+        ->toBeTrue()
+        ->and(file_exists($targetDir . '/SKILL.md'))
+        ->toBeTrue()
+        ->and(file_exists($targetDir . '/schema.json'))
+        ->toBeTrue()
+        ->and(file_exists($targetDir . '/helper.py'))
+        ->toBeTrue();
 
     $content = (string) file_get_contents($targetDir . '/SKILL.md');
-    expect($content)->toContain('my-staged-skill')
-        ->toContain('Instructions for staged skill.');
+    expect($content)->toContain('my-staged-skill')->toContain('Instructions for staged skill.');
 });

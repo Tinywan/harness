@@ -111,7 +111,7 @@ class CodexHarness implements HarnessInterface
         }
 
         $type = (string) ($event['type'] ?? '');
-        $sessionId = (string) ($event['session_id'] ?? ($event['thread_id'] ?? ''));
+        $sessionId = (string) ($event['session_id'] ?? $event['thread_id'] ?? '');
 
         if ($this->isCodexSessionEvent($type) && $sessionId !== '') {
             $emit(new Event(EventKind::Session, sessionID: $sessionId));
@@ -148,12 +148,21 @@ class CodexHarness implements HarnessInterface
                     if ($itemType === 'error') {
                         $errText = is_string($item['message'] ?? null)
                             ? $item['message']
-                            : (is_array($item['message'] ?? null) ? ($item['message']['message'] ?? json_encode($item['message'], JSON_UNESCAPED_UNICODE)) : (string) ($item['message'] ?? ''));
+                            : (
+                                is_array($item['message'] ?? null)
+                                    ? $item['message']['message'] ?? json_encode(
+                                        $item['message'],
+                                        JSON_UNESCAPED_UNICODE,
+                                    )
+                                    : (string) ($item['message'] ?? '')
+                            );
                         $emit(new Event(EventKind::Error, text: (string) $errText));
                         return;
                     }
                     if (!empty($item['text'])) {
-                        $text = is_string($item['text']) ? $item['text'] : json_encode($item['text'], JSON_UNESCAPED_UNICODE);
+                        $text = is_string($item['text'])
+                            ? $item['text']
+                            : json_encode($item['text'], JSON_UNESCAPED_UNICODE);
                         $emit(new Event(EventKind::Text, text: (string) $text));
                         return;
                     }
@@ -165,19 +174,21 @@ class CodexHarness implements HarnessInterface
                 }
 
                 if ($type === 'tool' || !empty($event['tool'])) {
-                    $name = (string) ($event['tool'] ?? ($event['name'] ?? ''));
-                    $emit(new Event(
-                        EventKind::Tool,
-                        tool: $name,
-                        text: Harness::summariseInput($name, $event['input'] ?? null)
-                    ));
+                    $name = (string) ($event['tool'] ?? $event['name'] ?? '');
+                    $emit(
+                        new Event(
+                            EventKind::Tool,
+                            tool: $name,
+                            text: Harness::summariseInput($name, $event['input'] ?? null),
+                        ),
+                    );
                     return;
                 }
 
                 if (!empty($event['error'])) {
                     $errorText = is_string($event['error'])
                         ? $event['error']
-                        : ($event['error']['message'] ?? json_encode($event['error'], JSON_UNESCAPED_UNICODE));
+                        : $event['error']['message'] ?? json_encode($event['error'], JSON_UNESCAPED_UNICODE);
                     $emit(new Event(EventKind::Error, text: (string) $errorText));
                     return;
                 }
@@ -191,7 +202,10 @@ class CodexHarness implements HarnessInterface
                 if (!empty($event['message'])) {
                     $msg = is_string($event['message'])
                         ? $event['message']
-                        : ($event['message']['content'] ?? ($event['message']['message'] ?? json_encode($event['message'], JSON_UNESCAPED_UNICODE)));
+                        : $event['message']['content'] ?? $event['message']['message'] ?? json_encode(
+                            $event['message'],
+                            JSON_UNESCAPED_UNICODE,
+                        );
                     $emit(new Event(EventKind::Text, text: (string) $msg));
                     return;
                 }
@@ -208,10 +222,12 @@ class CodexHarness implements HarnessInterface
 
     private function isCodexToolItem(string $itemType): bool
     {
-        return str_contains($itemType, 'command')
+        return (
+            str_contains($itemType, 'command')
             || str_contains($itemType, 'tool')
             || $itemType === 'web_search'
-            || $itemType === 'file_change';
+            || $itemType === 'file_change'
+        );
     }
 
     /**

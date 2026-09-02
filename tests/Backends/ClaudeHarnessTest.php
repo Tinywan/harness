@@ -22,17 +22,12 @@ test('claude getBinary returns claude', function () {
 });
 
 test('claude getArgs builds correct CLI parameters', function () {
-    $job = new Job(
-        workspace: '/work',
-        prompt: 'Test prompt',
-        model: 'claude-sonnet-4-6',
-        maxTurns: 15,
-        effort: 'high',
-    );
+    $job = new Job(workspace: '/work', prompt: 'Test prompt', model: 'claude-sonnet-4-6', maxTurns: 15, effort: 'high');
 
     $args = $this->harness->getArgs($job);
 
-    expect($args)->toContain('-p')
+    expect($args)
+        ->toContain('-p')
         ->toContain('--output-format')
         ->toContain('stream-json')
         ->toContain('--model')
@@ -79,19 +74,34 @@ test('claude parseStream maps jsonl to neutral events', function () {
         $events[] = $e;
     });
 
-    expect($events)->toHaveCount(5)
-        ->and($events[0]->getKindValue())->toBe(EventKind::Session->value)
-        ->and($events[0]->sessionID)->toBe('sess-abc-123')
-        ->and($events[1]->getKindValue())->toBe(EventKind::Thinking->value)
-        ->and($events[1]->text)->toBe('I am thinking')
-        ->and($events[2]->getKindValue())->toBe(EventKind::Tool->value)
-        ->and($events[2]->tool)->toBe('bash')
-        ->and($events[2]->text)->toBe('echo 1')
-        ->and($events[3]->getKindValue())->toBe(EventKind::Text->value)
-        ->and($events[3]->text)->toBe('Hello user')
-        ->and($events[4]->getKindValue())->toBe(EventKind::Result->value)
-        ->and($events[4]->text)->toBe('Operation succeeded')
-        ->and($events[4]->costUSD)->toBe(0.0125)
-        ->and($events[4]->turns)->toBe(2)
-        ->and($events[4]->usage->inputTokens)->toBe(100);
+    expect($events)
+        ->toHaveCount(5)
+        ->and($events[0]->getKindValue())
+        ->toBe(EventKind::Session->value)
+        ->and($events[0]->sessionID)
+        ->toBe('sess-abc-123')
+        ->and($events[1]->getKindValue())
+        ->toBe(EventKind::Thinking->value)
+        ->and($events[1]->text)
+        ->toBe('I am thinking')
+        ->and($events[2]->getKindValue())
+        ->toBe(EventKind::Tool->value)
+        ->and($events[2]->tool)
+        ->toBe('bash')
+        ->and($events[2]->text)
+        ->toBe('echo 1')
+        ->and($events[3]->getKindValue())
+        ->toBe(EventKind::Text->value)
+        ->and($events[3]->text)
+        ->toBe('Hello user')
+        ->and($events[4]->getKindValue())
+        ->toBe(EventKind::Result->value)
+        ->and($events[4]->text)
+        ->toBe('Operation succeeded')
+        ->and($events[4]->costUSD)
+        ->toBe(0.0125)
+        ->and($events[4]->turns)
+        ->toBe(2)
+        ->and($events[4]->usage->inputTokens)
+        ->toBe(100);
 });

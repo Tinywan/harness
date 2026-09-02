@@ -36,6 +36,5 @@ class Skill
         public string $schemaJSON = '',
         public string $sourceHash = '',
         public array $warnings = [],
-    ) {
-    }
+    ) {}
 }

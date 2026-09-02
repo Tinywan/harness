@@ -49,6 +49,5 @@ test('writeSandboxSettings writes claude settings json with domain allowlist', f
     expect(file_exists($settingsFile))->toBeTrue();
 
     $json = json_decode((string) file_get_contents($settingsFile), true);
-    expect($json)->toBeArray()
-        ->and($json['permissions']['sandbox']['allowedDomains'])->toBe($allowed);
+    expect($json)->toBeArray()->and($json['permissions']['sandbox']['allowedDomains'])->toBe($allowed);
 });

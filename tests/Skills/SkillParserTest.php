@@ -42,19 +42,19 @@ afterEach(function () {
 
 test('skill parser with YAML frontmatter', function () {
     $content = <<<MARKDOWN
----
-name: sec-review
-description: Performs security review on PHP code
-license: MIT
-compatibility: PHP 8.4+
-allowed-tools: read,grep
-metadata:
-  version: "1.0.0"
----
+        ---
+        name: sec-review
+        description: Performs security review on PHP code
+        license: MIT
+        compatibility: PHP 8.4+
+        allowed-tools: read,grep
+        metadata:
+          version: "1.0.0"
+        ---
 
-# Instructions
-Check for SQL injection and XSS vulnerabilities.
-MARKDOWN;
+        # Instructions
+        Check for SQL injection and XSS vulnerabilities.
+        MARKDOWN;
 
     $path = $this->tempDir . '/SKILL.md';
     file_put_contents($path, $content);
@@ -62,16 +62,27 @@ MARKDOWN;
 
     $skill = SkillParser::parse($path);
 
-    expect($skill->name)->toBe('sec-review')
-        ->and($skill->description)->toBe('Performs security review on PHP code')
-        ->and($skill->license)->toBe('MIT')
-        ->and($skill->compatibility)->toBe('PHP 8.4+')
-        ->and($skill->allowedTools)->toBe('read,grep')
-        ->and($skill->metadata)->toBe(['version' => '1.0.0'])
-        ->and($skill->body)->toContain('Check for SQL injection')
-        ->and($skill->schemaJSON)->toBe('{"type": "object"}')
-        ->and($skill->sourceHash)->not()->toBeEmpty()
-        ->and($skill->warnings)->toBeEmpty();
+    expect($skill->name)
+        ->toBe('sec-review')
+        ->and($skill->description)
+        ->toBe('Performs security review on PHP code')
+        ->and($skill->license)
+        ->toBe('MIT')
+        ->and($skill->compatibility)
+        ->toBe('PHP 8.4+')
+        ->and($skill->allowedTools)
+        ->toBe('read,grep')
+        ->and($skill->metadata)
+        ->toBe(['version' => '1.0.0'])
+        ->and($skill->body)
+        ->toContain('Check for SQL injection')
+        ->and($skill->schemaJSON)
+        ->toBe('{"type": "object"}')
+        ->and($skill->sourceHash)
+        ->not()
+        ->toBeEmpty()
+        ->and($skill->warnings)
+        ->toBeEmpty();
 });
 
 test('skill parser plain markdown without frontmatter', function () {
@@ -81,8 +92,7 @@ test('skill parser plain markdown without frontmatter', function () {
 
     $skill = SkillParser::parse($path);
 
-    expect($skill->name)->toBe(basename($this->tempDir))
-        ->and($skill->body)->toBe($content);
+    expect($skill->name)->toBe(basename($this->tempDir))->and($skill->body)->toBe($content);
 });
 
 test('render and concat skills', function () {
@@ -92,7 +102,8 @@ test('render and concat skills', function () {
     $skill = SkillParser::parse($path);
     $rendered = SkillDelivery::render($skill);
 
-    expect($rendered)->toContain('name: test-skill')
+    expect($rendered)
+        ->toContain('name: test-skill')
         ->toContain('description: \'A test skill\'')
         ->toContain('Skill body text.');
 

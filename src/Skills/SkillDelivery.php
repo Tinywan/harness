@@ -26,7 +26,10 @@ class SkillDelivery
     {
         $name = $job->skillName !== '' ? $job->skillName : $skill->name;
         if ($name === '' || str_contains($name, '/') || str_contains($name, '\\')) {
-            throw new InvalidArgumentException(sprintf('skills: skill name "%s" contains path separators or is empty', $name));
+            throw new InvalidArgumentException(sprintf(
+                'skills: skill name "%s" contains path separators or is empty',
+                $name,
+            ));
         }
 
         if ($job->workspace === '') {
@@ -35,7 +38,10 @@ class SkillDelivery
 
         $destination = $harness->getSkillDir($job->workspace, $name);
         if ($destination === '') {
-            throw new InvalidArgumentException(sprintf('skills: %s does not support staged skills', Harness::name($harness)));
+            throw new InvalidArgumentException(sprintf(
+                'skills: %s does not support staged skills',
+                Harness::name($harness),
+            ));
         }
 
         self::validateDestination($job->workspace, $destination);
@@ -88,11 +94,11 @@ class SkillDelivery
     public static function render(Skill $skill): string
     {
         if (
-            $skill->description === '' &&
-            $skill->license === '' &&
-            $skill->compatibility === '' &&
-            $skill->allowedTools === '' &&
-            empty($skill->metadata)
+            $skill->description === ''
+            && $skill->license === ''
+            && $skill->compatibility === ''
+            && $skill->allowedTools === ''
+            && empty($skill->metadata)
         ) {
             return rtrim($skill->body) . "\n";
         }
@@ -133,7 +139,11 @@ class SkillDelivery
         $destClean = rtrim(str_replace('\\', '/', $destination), '/');
 
         if ($destClean === $wsClean || !str_starts_with($destClean, $wsClean . '/')) {
-            throw new InvalidArgumentException(sprintf('skills: destination "%s" is outside workspace "%s"', $destination, $workspace));
+            throw new InvalidArgumentException(sprintf(
+                'skills: destination "%s" is outside workspace "%s"',
+                $destination,
+                $workspace,
+            ));
         }
     }
 

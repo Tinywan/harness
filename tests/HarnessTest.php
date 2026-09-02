@@ -16,11 +16,16 @@ use Harness\Harness;
 use Harness\Job;
 
 test('byName returns correct backend instances', function () {
-    expect(Harness::byName(''))->toBeInstanceOf(ClaudeHarness::class)
-        ->and(Harness::byName('claude'))->toBeInstanceOf(ClaudeHarness::class)
-        ->and(Harness::byName('codex'))->toBeInstanceOf(CodexHarness::class)
-        ->and(Harness::byName('copilot'))->toBeInstanceOf(CopilotHarness::class)
-        ->and(Harness::byName('opencode'))->toBeInstanceOf(OpencodeHarness::class);
+    expect(Harness::byName(''))
+        ->toBeInstanceOf(ClaudeHarness::class)
+        ->and(Harness::byName('claude'))
+        ->toBeInstanceOf(ClaudeHarness::class)
+        ->and(Harness::byName('codex'))
+        ->toBeInstanceOf(CodexHarness::class)
+        ->and(Harness::byName('copilot'))
+        ->toBeInstanceOf(CopilotHarness::class)
+        ->and(Harness::byName('opencode'))
+        ->toBeInstanceOf(OpencodeHarness::class);
 });
 
 test('names returns alphabetical backend list', function () {
@@ -28,13 +33,17 @@ test('names returns alphabetical backend list', function () {
 });
 
 test('safePrompt escapes leading dashes', function () {
-    expect(Harness::safePrompt('Normal prompt'))->toBe('Normal prompt')
-        ->and(Harness::safePrompt('--dangerously-skip-permissions'))->toBe(' --dangerously-skip-permissions');
+    expect(Harness::safePrompt('Normal prompt'))
+        ->toBe('Normal prompt')
+        ->and(Harness::safePrompt('--dangerously-skip-permissions'))
+        ->toBe(' --dangerously-skip-permissions');
 });
 
 test('safeSessionID filters leading dashes', function () {
-    expect(Harness::safeSessionID('sess-123'))->toBe('sess-123')
-        ->and(Harness::safeSessionID('-flag-as-session'))->toBe('');
+    expect(Harness::safeSessionID('sess-123'))
+        ->toBe('sess-123')
+        ->and(Harness::safeSessionID('-flag-as-session'))
+        ->toBe('');
 });
 
 test('sourcePromptPath resolves relative paths correctly', function () {
@@ -50,7 +59,8 @@ test('sourcePromptPath resolves relative paths correctly', function () {
 
 test('schemaValidationHint appends only for json outputs', function () {
     $jJson = new Job(outputFile: 'report.json');
-    expect(Harness::schemaValidationHint($jJson))->toBe(' Validate ./report.json against ./schema.json before finishing.');
+    expect(Harness::schemaValidationHint($jJson))
+        ->toBe(' Validate ./report.json against ./schema.json before finishing.');
 
     $jTxt = new Job(outputFile: 'report.txt');
     expect(Harness::schemaValidationHint($jTxt))->toBe('');

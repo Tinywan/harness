@@ -72,10 +72,13 @@ class CopilotHarness implements HarnessInterface
         $maxTurns = $job->maxTurns > 0 ? $job->maxTurns : Job::DEFAULT_MAX_TURNS;
 
         $args = [
-            '-p', $this->getPrompt($job),
-            '--output-format', 'json',
+            '-p',
+            $this->getPrompt($job),
+            '--output-format',
+            'json',
             '--autopilot',
-            '--max-autopilot-continues', (string) $maxTurns,
+            '--max-autopilot-continues',
+            (string) $maxTurns,
             '--allow-all',
             '--no-ask-user',
             '--no-auto-update',
@@ -123,7 +126,9 @@ class CopilotHarness implements HarnessInterface
 
     public function getSkillDir(string $workspace, string $name): string
     {
-        return $workspace . DIRECTORY_SEPARATOR . '.github' . DIRECTORY_SEPARATOR . 'skills' . DIRECTORY_SEPARATOR . $name;
+        return (
+            $workspace . DIRECTORY_SEPARATOR . '.github' . DIRECTORY_SEPARATOR . 'skills' . DIRECTORY_SEPARATOR . $name
+        );
     }
 
     public function getGuideFilename(): string
@@ -260,11 +265,13 @@ class CopilotStreamState
             case 'tool.execution_start':
                 if ($agentId === '' && is_array($data) && !empty($data['toolName'])) {
                     $toolName = (string) $data['toolName'];
-                    $emit(new Event(
-                        EventKind::Tool,
-                        tool: $toolName,
-                        text: Harness::summariseInput($toolName, $data['arguments'] ?? null)
-                    ));
+                    $emit(
+                        new Event(
+                            EventKind::Tool,
+                            tool: $toolName,
+                            text: Harness::summariseInput($toolName, $data['arguments'] ?? null),
+                        ),
+                    );
                 }
                 break;
 
@@ -280,7 +287,7 @@ class CopilotStreamState
             case 'session.usage_checkpoint':
                 if (is_array($data) && isset($data['totalNanoAiu'])) {
                     $total = (float) $data['totalNanoAiu'];
-                    $this->checkpointCostUSD = $total / 1e9 * 0.01;
+                    $this->checkpointCostUSD = ($total / 1e9) * 0.01;
                     $this->sawCheckpoint = true;
                 }
                 break;
@@ -297,7 +304,12 @@ class CopilotStreamState
                     $emit(new Event(EventKind::Session, sessionID: (string) $event['sessionId']));
                 }
                 if (isset($event['exitCode']) && (int) $event['exitCode'] !== 0) {
-                    $emit(new Event(EventKind::Error, text: sprintf('copilot exited with code %d', (int) $event['exitCode'])));
+                    $emit(
+                        new Event(EventKind::Error, text: sprintf(
+                            'copilot exited with code %d',
+                            (int) $event['exitCode'],
+                        )),
+                    );
                 }
                 break;
 
@@ -412,12 +424,19 @@ class CopilotStreamState
      */
     private function recordResultText(array $data): void
     {
-        $callId = (string) ($data['apiCallId'] ?? ($data['messageId'] ?? ''));
+        $callId = (string) ($data['apiCallId'] ?? $data['messageId'] ?? '');
         $content = (string) ($data['content'] ?? '');
         $chunkCount = isset($data['chunkCount']) ? (int) $data['chunkCount'] : null;
         $chunkIndex = isset($data['chunkIndex']) ? (int) $data['chunkIndex'] : null;
 
-        if ($callId === '' || $chunkCount === null || $chunkIndex === null || $chunkCount <= 1 || $chunkIndex < 0 || $chunkIndex >= $chunkCount) {
+        if (
+            $callId === ''
+            || $chunkCount === null
+            || $chunkIndex === null
+            || $chunkCount <= 1
+            || $chunkIndex < 0
+            || $chunkIndex >= $chunkCount
+        ) {
             $this->resultCallID = $callId;
             $this->resultChunks = [];
             $this->result->text = $content;
@@ -472,7 +491,7 @@ class CopilotStreamState
             $hasOverageAllowed = (bool) ($snapshot['overageAllowedWithExhaustedQuota'] ?? false);
             $overage = (float) ($snapshot['overage'] ?? 0.0);
 
-            $status = (!$hasUsageAllowed && !$hasOverageAllowed) ? 'rejected' : 'allowed';
+            $status = !$hasUsageAllowed && !$hasOverageAllowed ? 'rejected' : 'allowed';
             $overageStatus = $hasOverageAllowed ? 'allowed' : 'rejected';
 
             $resetsAt = 0;
@@ -486,7 +505,7 @@ class CopilotStreamState
             $info = new RateLimitInfo(
                 status: $status,
                 overageStatus: $overageStatus,
-                isUsingOverage: ($overage > 0 && $hasOverageAllowed),
+                isUsingOverage: $overage > 0 && $hasOverageAllowed,
                 resetsAt: $resetsAt,
                 type: $key,
             );
@@ -532,7 +551,7 @@ class CopilotStreamState
             (string) ($raw['failureKind'] ?? ''),
             (string) ($raw['errorType'] ?? ''),
             (string) ($raw['errorCode'] ?? ''),
-            isset($raw['statusCode']) ? (int) $raw['statusCode'] : null
+            isset($raw['statusCode']) ? (int) $raw['statusCode'] : null,
         );
 
         $emit(new Event(EventKind::Error, text: $text . $details));
@@ -543,7 +562,9 @@ class CopilotStreamState
         if (is_array($raw)) {
             $text = (string) ($raw['message'] ?? '');
             if ($text === '' && !empty($raw['error'])) {
-                $text = is_string($raw['error']) ? $raw['error'] : (string) ($raw['error']['message'] ?? json_encode($raw['error'], JSON_UNESCAPED_UNICODE));
+                $text = is_string($raw['error'])
+                    ? $raw['error']
+                    : (string) ($raw['error']['message'] ?? json_encode($raw['error'], JSON_UNESCAPED_UNICODE));
             }
             if ($text !== '') {
                 $details = $this->copilotErrorDetails(
@@ -551,7 +572,7 @@ class CopilotStreamState
                     '',
                     (string) ($raw['errorType'] ?? ''),
                     (string) ($raw['errorCode'] ?? ''),
-                    isset($raw['statusCode']) ? (int) $raw['statusCode'] : null
+                    isset($raw['statusCode']) ? (int) $raw['statusCode'] : null,
                 );
                 $emit(new Event(EventKind::Error, text: $text . $details));
                 return;
@@ -561,8 +582,13 @@ class CopilotStreamState
         $emit(new Event(EventKind::Error, text: $fallback));
     }
 
-    private function copilotErrorDetails(string $model, string $failureKind, string $errorType, string $errorCode, ?int $statusCode): string
-    {
+    private function copilotErrorDetails(
+        string $model,
+        string $failureKind,
+        string $errorType,
+        string $errorCode,
+        ?int $statusCode,
+    ): string {
         $details = [];
         foreach ([$model, $failureKind, $errorType, $errorCode] as $d) {
             if ($d !== '') {

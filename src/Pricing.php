@@ -87,10 +87,14 @@ class Pricing
             $uncached = 0;
         }
 
-        $cost = ($uncached * $price['in']
-            + $usage->cacheReadTokens * $price['cached_in']
-            + $usage->cacheWriteTokens * $cacheWriteRate
-            + $usage->outputTokens * $price['out']) / self::PER_MILLION;
+        $cost =
+            (
+                ($uncached * $price['in'])
+                + ($usage->cacheReadTokens * $price['cached_in'])
+                + ($usage->cacheWriteTokens * $cacheWriteRate)
+                + ($usage->outputTokens * $price['out'])
+            )
+            / self::PER_MILLION;
 
         return round($cost, 6);
     }

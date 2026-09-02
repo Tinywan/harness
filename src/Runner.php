@@ -27,7 +27,7 @@ class Runner
         HarnessInterface $harness,
         Job $job,
         ?callable $emit = null,
-        ?float $timeout = null
+        ?float $timeout = null,
     ): void {
         if ($job->workspace === '') {
             throw new InvalidArgumentException('harness: workspace is required');
@@ -36,10 +36,7 @@ class Runner
         Harness::writeSystemPrompt($harness, $job);
 
         $command = array_merge([$harness->getBinary()], $harness->getArgs($job));
-        $env = self::mergeEnv(
-            self::getHostEnv(),
-            $harness->getEnv($job->baseURL)
-        );
+        $env = self::mergeEnv(self::getHostEnv(), $harness->getEnv($job->baseURL));
 
         $process = new Process($command, $job->workspace, $env, null, $timeout);
 
@@ -52,11 +49,8 @@ class Runner
      * @param callable(Event): void|null $emit
      * @return string Stderr output
      */
-    public static function streamProcess(
-        Process $process,
-        HarnessInterface $harness,
-        ?callable $emit = null
-    ): string {
+    public static function streamProcess(Process $process, HarnessInterface $harness, ?callable $emit = null): string
+    {
         $emit ??= function (Event $e): void {};
 
         $stderrBuf = '';
@@ -66,7 +60,13 @@ class Runner
         // Buffer partial line chunks between callbacks
         $stdoutBuffer = '';
 
-        $process->start(function (string $type, string $buffer) use ($harness, $emit, &$stderrBuf, &$parsedErrors, &$stdoutBuffer): void {
+        $process->start(function (string $type, string $buffer) use (
+            $harness,
+            $emit,
+            &$stderrBuf,
+            &$parsedErrors,
+            &$stdoutBuffer,
+        ): void {
             if ($type === Process::ERR) {
                 $stderrBuf .= $buffer;
                 // Also parse stderr as stream lines in case backend outputs JSONL on stderr
@@ -129,7 +129,7 @@ class Runner
                 'harness: %s failed with exit code %d: %s',
                 $cmdLine,
                 $exitCode ?? -1,
-                $stderrBuf !== '' ? $stderrBuf : $process->getErrorOutput()
+                $stderrBuf !== '' ? $stderrBuf : $process->getErrorOutput(),
             ));
         }
 
