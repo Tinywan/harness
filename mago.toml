@@ -1,0 +1,15 @@
+# Mago Configuration File
+# Documentation: https://mago.carthage.software
+
+[source]
+paths = ["src", "examples", "tests"]
+includes = ["**/*.php"]
+excludes = ["vendor/**", ".git/**", ".phpunit.cache/**"]
+
+[formatter]
+line_width = 120
+tab_spaces = 4
+use_tabs = false
+
+[linter]
+level = "warning"

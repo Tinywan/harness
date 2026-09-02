@@ -1,0 +1,7 @@
+/vendor/
+/.idea/
+/.vscode/
+.phpunit.result.cache
+.pest.result.cache
+.phpunit.cache/
+*.log
